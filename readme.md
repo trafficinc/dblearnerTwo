@@ -4,7 +4,7 @@ This is a small tool to get to know which tables in MySQL are affected by action
 
 > Dependencies: PHP 8 (PHP 7 may work?) & PDO, MySQL Database (MariaDB may work?), a database.
 
-Change `sample-config.json` to `config.json` and finish configuration.
+Change `sample.db_config.php` to `db_config.php` and finish configuration.
 
 ### Follow Steps
 
