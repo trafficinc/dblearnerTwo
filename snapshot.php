@@ -38,8 +38,22 @@ if (isset($options['clear'])) {
             RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($files as $fileinfo) {
-            $todo = $fileinfo->isDir() ? 'rmdir' : 'unlink';
-            $todo($fileinfo->getRealPath());
+            $path = $fileinfo->getRealPath();
+
+            if ($fileinfo->isFile()) {
+                // skip .gitignore files
+                if ($fileinfo->getFilename() === '.gitignore') {
+                    continue;
+                }
+                unlink($path);
+            } elseif ($fileinfo->isDir()) {
+                // only rmdir if the dir is now completely empty
+                $it = new FilesystemIterator($path);
+                if (!$it->valid()) {
+                    // no files left at all
+                    rmdir($path);
+                }
+            }
         }
         $logger->info("Cleared out snapshot directory: {$snapshotDir}");
     }

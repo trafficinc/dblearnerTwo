@@ -21,7 +21,7 @@ class Snapshotter {
 
     }
 
-        /**
+    /**
      * Completely wipe out the base snapshot directory (all labels).
      */
     public function clearBaseDir(): void
@@ -30,9 +30,25 @@ class Snapshotter {
             new RecursiveDirectoryIterator($this->baseDir, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
         );
+
         foreach ($it as $file) {
-            $file->isDir() ? rmdir($file->getRealPath()) : unlink($file->getRealPath());
+            $path = $file->getRealPath();
+
+            if ($file->isFile()) {
+                // Skip .gitignore files
+                if ($file->getFilename() === '.gitignore') {
+                    continue;
+                }
+                unlink($path);
+            } elseif ($file->isDir()) {
+                // Only remove the directory if it's now empty
+                $inner = new FilesystemIterator($path);
+                if (!$inner->valid()) {
+                    rmdir($path);
+                }
+            }
         }
+
         $this->logger->info("Cleared base snapshot directory: {$this->baseDir}");
     }
 
@@ -80,7 +96,7 @@ class Snapshotter {
         $this->logger->info("Completed '$label' snapshot.");
     }
 
-        /**
+    /**
      * Recursively delete all files & subdirs under $path, but leave $path itself.
      */
     private function clearDirectory(string $path): void
@@ -89,14 +105,26 @@ class Snapshotter {
             new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
         );
+
         foreach ($it as $item) {
-            if ($item->isDir()) {
-                rmdir($item->getRealPath());
-            } else {
-                unlink($item->getRealPath());
+            $realPath = $item->getRealPath();
+
+            if ($item->isFile()) {
+                // 1) Skip .gitignore files
+                if ($item->getFilename() === '.gitignore') {
+                    continue;
+                }
+                unlink($realPath);
+            } elseif ($item->isDir()) {
+                // 2) Only rmdir if the directory is now completely empty
+                $inner = new FilesystemIterator($realPath);
+                if (!$inner->valid()) {
+                    rmdir($realPath);
+                }
             }
         }
     }
+
 
     private function streamTableWithCursor($table, $useHashing) {
         $rows = [];
