@@ -19,6 +19,12 @@ Change `sample.db_config.php` to `db_config.php` and finish configuration.
 4. Compare Snapshots and see results of the "Action":
 `php compare.php`
 
+### Example Output
+`► Table: users
+  * Updates (1)
+    → [0]
+       last_login: 2025-06-02 07:26:58 → 2025-06-15 09:22:35`
+
 ### Override Tables from Command Line (Optional):
 `php snapshot.php before --tables=users,orders`
 
