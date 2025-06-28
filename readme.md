@@ -4,13 +4,17 @@ This is a small tool to get to know which tables in MySQL are affected by action
 
 > Dependencies: PHP 8 (PHP 7 may work?) & PDO, MySQL Database (MariaDB may work?), a database.
 
-### Snapshot Before with Config Settings:
+### Follow Steps
+
+1. Snapshot Before with Config Settings:
 `php snapshot.php --label=before`
 
-### Snapshot After with Config Settings:
+2. *"Action" Do something in the application, something you want to see what effects the database, for example submitting a form.*
+
+3. Snapshot After with Config Settings:
 `php snapshot.php --label=after`
 
-### Compare Snapshots:
+4. Compare Snapshots and see results of the "Action":
 `php compare.php`
 
 ### Override Tables from Command Line (Optional):
